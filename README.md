@@ -14,4 +14,4 @@
 4.![enter description here][1]
 
 
-  [1]: ./blob/master/res/1.png "1"
+  [1]: ./res/1.png "1"
