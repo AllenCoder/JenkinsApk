@@ -13,7 +13,8 @@ def getSeparator():
         separator = '/'
     return separator
 
-rootPath="F:\Github\JenkinsApk"+getSeparator()
+
+rootPath = "F:\Github\JenkinsApk" + getSeparator()
 workDir = "E:\\work\\statistics-android\\app\\build\\bakApk" + getSeparator()
 filePath = rootPath
 
@@ -29,13 +30,13 @@ def getNewApk():
         if not os.path.isdir(file):  # 判断是否是文件夹，不是文件夹才打开
             if (file.endswith(".apk")):
                 global filePath
-                filePath = path_files_+ getSeparator() + file
+                filePath = path_files_ + getSeparator() + file
                 print("filePath === ", filePath)
 
 
 @route('/download/link')
 def download():
-    return static_file(rootPath, download=True)
+    return static_file(filePath, root="", download=True)
 
 
 @route('/')
@@ -72,6 +73,7 @@ def file():
 @route('/download/<filename:path>')
 def download(filename):
     return static_file(filename, root='', download=filename)
+
 
 if __name__ == '__main__':
     getNewApk()
