@@ -3,7 +3,9 @@ import platform
 from MyQR import myqr
 import os
 import webbrowser
-from bottle import route, run, template, static_file
+from flask import Flask, render_template, send_from_directory, make_response
+
+app = Flask(__name__)
 import socket
 
 ip = ""
@@ -67,41 +69,38 @@ def getNewApk():
                 filename = file
 
 
-@route('/download/link')
+@app.route('/download/link')
 def download():
+    logger.info("/download/link")
     getNewApk()
-    return static_file('247.apk', root="F:\Github\JenkinsApk\main\static", download=True)
+    logger.info("filename" + filename)
+    # filename ="247.apk"
+    # androidWorkDir ="F:\Github\JenkinsApk\main\static"
+    # # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
+    response = make_response(send_from_directory(androidWorkDir, filename, as_attachment=True))
+    response.headers["Content-Disposition"] = "attachment; filename={}".format(filename.encode().decode('latin-1'))
+    return response
+    # return app.send_static_file(filename)
+    # return send_from_directory(androidWorkDir, filename)
 
 
-@route('/')
+@app.route('/')
 def index():
     print(getSeparator())
 
     picture_name = 'apk.png'
 
-    return template('templates', picture=picture_name, url="http://" + ip + ":"+port+"/download/link")
+    return render_template('template.html', picture=picture_name, url="http://" + ip + ":" + port + "/download/link")
 
 
-@route('/url')
+@app.route('/url')
 def getDownloadUrl():
     return "http://" + ip + ":" + port + "/download/link"
 
 
-@route('/picture/<picture>')
+@app.route('/picture/<picture>')
 def serve_pictures(picture):
-    return static_file(picture, root=rootPath + getSeparator() + 'picture')
-
-
-# 静态文件
-@route('/file')
-def file():
-    return static_file("170717007.xml", root="")
-
-
-# 下载文件
-@route('/download/<filename:path>')
-def download(filename):
-    return static_file(filename, root='', download=filename)
+    return send_from_directory(rootPath + getSeparator() + 'picture', picture)
 
 
 def generate_pic():
@@ -121,12 +120,12 @@ def generate_pic():
 
 
 if __name__ == '__main__':
-    ip = "10.0.31.14"
+    ip = get_host_ip()
     generate_pic()
     getNewApk()
     logger.info('开始打开浏览器')
 
     logger.info(ip)
-    webbrowser.open_new_tab("http://" + ip + ":"+port+"/")
+    webbrowser.open_new_tab("http://" + ip + ":" + port + "/")
     logger.info('打开浏览器')
-    run(host='0.0.0.0', port=port)
+    app.run(debug=False, host=ip, port=int(port), threaded=True)
