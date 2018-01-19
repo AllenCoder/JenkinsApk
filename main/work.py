@@ -70,7 +70,7 @@ def getNewApk():
 @route('/download/link')
 def download():
     getNewApk()
-    return static_file('247.apk', root="F:\Github\JenkinsApk\main\static", download=True)
+    return static_file(filename, root=workDir, download=True)
 
 
 @route('/')

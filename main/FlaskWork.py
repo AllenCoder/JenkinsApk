@@ -52,7 +52,7 @@ rootPath = "F:\\Github\\JenkinsApk" + getSeparator()
 port = "8090"
 
 
-def getNewApk():
+def get_new_apk():
     files = os.listdir(workDir)
     print(files[-1])
     global androidWorkDir
@@ -72,7 +72,7 @@ def getNewApk():
 @app.route('/download/link')
 def download():
     logger.info("/download/link")
-    getNewApk()
+    get_new_apk()
     logger.info("filename" + filename)
     # filename ="247.apk"
     # androidWorkDir ="F:\Github\JenkinsApk\main\static"
@@ -80,8 +80,6 @@ def download():
     response = make_response(send_from_directory(androidWorkDir, filename, as_attachment=True))
     response.headers["Content-Disposition"] = "attachment; filename={}".format(filename.encode().decode('latin-1'))
     return response
-    # return app.send_static_file(filename)
-    # return send_from_directory(androidWorkDir, filename)
 
 
 @app.route('/')
@@ -94,7 +92,7 @@ def index():
 
 
 @app.route('/url')
-def getDownloadUrl():
+def get_download_url():
     return "http://" + ip + ":" + port + "/download/link"
 
 
@@ -106,7 +104,7 @@ def serve_pictures(picture):
 def generate_pic():
     save_dir = rootPath + 'picture'
     myqr.run(
-        getDownloadUrl(),
+        get_download_url(),
         version=1,
         level='H',
         picture=None,
@@ -122,7 +120,7 @@ def generate_pic():
 if __name__ == '__main__':
     ip = get_host_ip()
     generate_pic()
-    getNewApk()
+    get_new_apk()
     logger.info('开始打开浏览器')
 
     logger.info(ip)
